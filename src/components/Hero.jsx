@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from "react-router-dom";
 
 import './Hero.css';
 
@@ -13,7 +14,7 @@ const Hero = () => {
       Why whisper when you can roar?Share your voice with the world!
       </p>
       <button className="anim" id="but">
-        <a href="login.htm" style={{ textDecoration: 'none', color: 'inherit' }}>Start reading</a>
+        <Link to="/signin" style={{ textDecoration: 'none', color: 'inherit' }}>Start reading</Link>
       </button>
         <img className="anim" src="https://i.pinimg.com/736x/52/85/8e/52858ec78a416e8f4856e482c6c9ac59.jpg"></img>
      

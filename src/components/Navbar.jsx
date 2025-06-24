@@ -1,27 +1,26 @@
-import { React } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
 import './Navbar.css';
 
-function Navbar(){
-    return (
- <header className="header">
+function Navbar() {
+  return (
+    <header className="header">
       <div className="header-container">
         <div className="header-brand">
-          <h1 className="header-logo">Inkspire</h1>
+          <Link to="/" className="header-logo">Inkspire</Link>
         </div>
-        
+
         <nav className="header-nav">
-          <a href="#" className="header-link">Our story</a>
-          
-          <a href="#" className="header-link">Write</a>
-          <a href="#" className="header-link">Sign in</a>
-          <button className="header-button">
-            Get started
-          </button>
+          <Link to="/story" className="header-link">Our Story</Link>
+          <Link to="/write" className="header-link">Write</Link>
+          <Link to="/signin" className="header-link">Sign In</Link>
+          <Link to="/get-started">
+            <button className="header-button">Get Started</button>
+          </Link>
         </nav>
       </div>
-    </header> 
-        
-    );
+    </header>
+  );
 }
+
 export default Navbar;

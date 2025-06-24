@@ -3,6 +3,7 @@ import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import Footer from './components/Footer';
 import Signup from './components/Signup';
+import Write from './components/Write';
 function App() {
   return(
     <Router>
@@ -10,6 +11,7 @@ function App() {
      <Routes>
       <Route path='/' element={<Hero/>} />
       <Route path='/signin' element={<Signup/>} />
+      <Route path='/write' element={<Write/>} />
          
 </Routes>
       <Footer/>

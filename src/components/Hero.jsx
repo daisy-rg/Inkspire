@@ -1,32 +1,22 @@
-
 import React from 'react';
 import './Hero.css';
 
 const Hero = () => {
   return (
-    <section className="hero">
-  
-      <div className="hero-content">
-        <div className="hero-text-container">
-          <h1 className="hero-title">
-            Human<br />
-            stories & ideas
-          </h1>
-          
-          <p className="hero-subtitle">
-            A place to read, write, and deepen your understanding
-          </p>
-          
-          <button className="hero-button">
-            Start reading
-          </button>
-        </div>
-      </div>
-      
-      {/* Bottom border line */}
-      <div className="hero-border"></div>
+    <section>
+      <h1 id="intro" className="anim">
+        Welcome<br />to your wardrobe
+      </h1>
+      <p className="anim">
+        Do you feel like you have nothing to wear?<br />
+        Whimsy wardrobe is here to help you access any brand and type of cloth. You name it!
+      </p>
+      <button className="anim" id="but">
+        <a href="login.htm" style={{ textDecoration: 'none', color: 'inherit' }}>Start Now</a>
+      </button>
+      <img src="./images/feature.png" alt="Feature" id="feature" className="anim" />
     </section>
   );
-};
+}
 
 export default Hero;

@@ -1,0 +1,27 @@
+.hero {
+  position: relative;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #fffbeb 0%, #fed7aa 50%, #fecaca 100%);
+  overflow: hidden;
+}
+
+.hero-decorative {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 50%;
+  height: 100%;
+}
+
+.hero-green-circle-1 {
+  position: absolute;
+  top: 5rem;
+  right: 8rem;
+  width: 8rem;
+  height: 8rem;
+  background-color: #10b981;
+  border-radius: 50%;
+  opacity: 0.9;
+  transform: rotate(12deg);
+}
+

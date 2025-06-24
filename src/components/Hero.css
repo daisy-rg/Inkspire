@@ -1,27 +1,102 @@
-.hero {
-  position: relative;
-  min-height: 100vh;
-  background: linear-gradient(135deg, #fffbeb 0%, #fed7aa 50%, #fecaca 100%);
-  overflow: hidden;
+
+section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 4rem 2rem;
+  background: #fff9f6; 
+  min-height: 90vh;
+  margin-left: -100vh;
+  margin-bottom: -10vh;
 }
 
-.hero-decorative {
-  position: absolute;
-  right: 0;
-  top: 0;
-  width: 50%;
-  height: 100%;
+
+#intro {
+  font-family: 'Playfair Display', serif;
+  font-size: 8rem;
+  font-weight: 700;
+  line-height: 1.1;
+  color: #2a2a2a;
+  margin-bottom: 1.5rem;
+  letter-spacing: -0.03em;
 }
 
-.hero-green-circle-1 {
-  position: absolute;
-  top: 5rem;
-  right: 8rem;
-  width: 8rem;
-  height: 8rem;
-  background-color: #10b981;
-  border-radius: 50%;
-  opacity: 0.9;
-  transform: rotate(12deg);
+section p {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1.2rem;
+  line-height: 1.6;
+  color: #555;
+  max-width: 600px;
+  margin-bottom: 2.5rem;
 }
 
+#but {
+   padding: 0.8rem 2rem;
+  font-size: 1.1rem;
+  background-color: #000; /* Black button */
+  color: #fff;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-bottom: 2rem;
+
+}
+
+#but:hover {
+  background: #5f6673;
+  transform: translateY(-3px);
+}
+
+#feature {
+  max-width: 100%;
+  height: auto;
+  margin-top: 3rem;
+  max-height: 50vh;
+  object-fit: contain;
+  filter: drop-shadow(0 10px 20px rgba(0,0,0,0.1));
+}
+
+
+.anim {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeInUp 0.8s ease forwards;
+}
+
+@keyframes fadeInUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+#intro.anim { animation-delay: 0.2s; }
+p.anim { animation-delay: 0.4s; }
+#but.anim { animation-delay: 0.6s; }
+#feature.anim { animation-delay: 0.8s; }
+img.anim{ animation-delay: 0.2s;}
+
+@media (max-width: 768px) {
+  #intro {
+    font-size: 2.5rem;
+  }
+  
+  section p {
+    font-size: 1rem;
+  }
+  
+  #but {
+    padding: 0.8rem 2rem;
+  }
+}
+img{
+   margin-right: -200vh;
+   margin-top: -70vh;
+   margin-bottom: 20vh;
+   width: 650px;
+    height: 700px;
+       
+}

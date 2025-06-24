@@ -1,20 +1,22 @@
 import React from 'react';
+
 import './Hero.css';
 
 const Hero = () => {
   return (
-    <section>
+    <section className="lead">
       <h1 id="intro" className="anim">
-        Welcome<br />to your wardrobe
+        Human<br />stories & ideas
       </h1>
       <p className="anim">
-        Do you feel like you have nothing to wear?<br />
-        Whimsy wardrobe is here to help you access any brand and type of cloth. You name it!
+        A place to read,write and deepen your understanding<br />
+      Why whisper when you can roar?Share your voice with the world!
       </p>
       <button className="anim" id="but">
-        <a href="login.htm" style={{ textDecoration: 'none', color: 'inherit' }}>Start Now</a>
+        <a href="login.htm" style={{ textDecoration: 'none', color: 'inherit' }}>Start reading</a>
       </button>
-      <img src="./images/feature.png" alt="Feature" id="feature" className="anim" />
+        <img className="anim" src="https://i.pinimg.com/736x/52/85/8e/52858ec78a416e8f4856e482c6c9ac59.jpg"></img>
+     
     </section>
   );
 }

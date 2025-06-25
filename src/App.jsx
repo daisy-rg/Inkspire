@@ -4,6 +4,7 @@ import Home from './pages/Home';
 import Footer from './components/Footer';
 import Signup from './components/Signup';
 import Write from './components/Write';
+import Postlist from './pages/Postlist';
 function App() {
   return(
     <Router>
@@ -12,6 +13,9 @@ function App() {
  <Route path="/" element={<Home />} />
       <Route path='/signin' element={<Signup/>} />
       <Route path='/write' element={<Write/>} />
+      <Route path='/get-started' element={<Signup/>} />
+      <Route path='/start' element={<Postlist/>} />
+
          
 </Routes>
       <Footer/>

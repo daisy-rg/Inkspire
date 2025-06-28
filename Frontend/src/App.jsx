@@ -14,7 +14,7 @@ function App() {
       <Route path='/signin' element={<Signup/>} />
       <Route path='/write' element={<Write/>} />
       <Route path='/get-started' element={<Signup/>} />
-      <Route path='/start' element={<Postlist/>} />
+      
 
          
 </Routes>

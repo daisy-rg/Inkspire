@@ -15,13 +15,14 @@ function Write() {
     setMessage("User not logged in.");
     return;
   }
+  const userId = localStorage.getItem("user_id");
   fetch("http://localhost:5000/posts", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
     credentials: "include",
-    body: JSON.stringify({ title, content, user_id }),
+    body: JSON.stringify({ title, content, user_id:userId }),
   })
     .then((response) =>
       response.json().then((data) => ({ status: response.status, data }))

@@ -5,9 +5,10 @@ name = "pypi"
 
 [packages]
 flask-sqlalchemy = "*"
-flask = "*"
 cors = "*"
 flask-login = "*"
+flask = "*"
+flask-cors = "*"
 
 [dev-packages]
 

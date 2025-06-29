@@ -18,7 +18,7 @@ function Signup() {
     fetch(`http://localhost:5000/${endpoint}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      credentials: "include", // ✅ important for session cookie
+      credentials: "include", 
       body: JSON.stringify(payload),
     })
       .then((response) => {
@@ -26,7 +26,8 @@ function Signup() {
           if (response.ok) {
             setMessage("Success!");
             if (!isSignUp) {
-              localStorage.setItem("username", data.username); // optional
+              localStorage.setItem("username", data.username); 
+              localStorage.setItem("user_id", data.user_id);
             }
             navigate("/start");
           } else {

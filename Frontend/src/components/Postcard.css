@@ -35,3 +35,20 @@
   margin-bottom: 1rem;
 }
 
+.read-btn,
+.delete-btn {
+  padding: 8px 14px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.read-btn {
+  background-color: #0c0c0c;
+  color: white;
+}
+
+.delete-btn {
+  background-color: #0f0f0f;
+  color: white;
+}

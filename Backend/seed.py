@@ -24,7 +24,7 @@ with app.app_context():
         for _ in range(fake.random_int(min=2, max=7)):
             post = Post(
                 title=fake.sentence(nb_words=6),
-                content=fake.paragraph(nb_sentences=12),
+                content=fake.paragraph(nb_sentences=300),
                 created_at=fake.date_time_between(start_date='-1y', end_date='now'),
                 user_id=user.id
             )

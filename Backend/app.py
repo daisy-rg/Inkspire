@@ -1,33 +1,32 @@
 from flask import Flask
 from flask_cors import CORS
 from config import Config
-from models.models import db, User
-from flask_migrate import Migrate
-from flask_login import LoginManager  
+from models.models import db
 from routes.auth_routes import auth_bp
 from routes.post_routes import post_bp
+from flask_migrate import Migrate
 import os
 
 app = Flask(__name__, instance_relative_config=True)
+app.secret_key = 'your-super-secret-key'  
 app.config.from_object(Config)
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 db_path = os.path.join(basedir, 'instance', 'inkspire.db')
 app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{db_path}'
-app.config['SECRET_KEY'] = 'your-secret-key'  
+print("DB PATH:", db_path)
+print("DB EXISTS:", os.path.exists(db_path))
 
-CORS(app, supports_credentials=True)
+CORS(app, resources={r"/*": {"origins": [
+    "http://127.0.0.1:5173",
+    "http://localhost:5173",
+    "http://127.0.0.1:5174",
+    "http://localhost:5174"
+]}}, supports_credentials=True)
+
 
 db.init_app(app)
 migrate = Migrate(app, db)
-
-login_manager = LoginManager()
-login_manager.init_app(app)
-login_manager.login_view = 'auth_bp.login'  
-
-@login_manager.user_loader
-def load_user(user_id):
-    return User.query.get(int(user_id))
 
 app.register_blueprint(auth_bp)
 app.register_blueprint(post_bp)

@@ -1,8 +1,34 @@
-from flask import Blueprint, request, jsonify
-from models.models import db, Post, User
+from flask import Blueprint, jsonify, request
 from flask_login import login_required, current_user
+from models.models import db, Post
+from datetime import datetime
 
-post_bp = Blueprint('post_bp', __name__)
+post_bp = Blueprint('posts_bp', __name__)
+
+@post_bp.route('/posts', methods=['GET'])
+def get_posts():
+    try:
+        posts = Post.query.options(db.joinedload(Post.author)).all()
+        posts_data = []
+
+        for post in posts:
+            post_data = {
+                'id': post.id,
+                'title': post.title,
+                'content': post.content,
+                'created_at': post.created_at.isoformat(),
+                'author': {
+                    'id': post.author.id,
+                    'username': post.author.username
+                } if post.author else None
+            }
+            posts_data.append(post_data)
+
+        return jsonify(posts_data), 200
+
+    except Exception as e:
+        print(f"Error fetching posts: {str(e)}")
+        return jsonify({'error': 'Internal server error'}), 500
 
 @post_bp.route('/posts', methods=['POST'])
 @login_required
@@ -11,13 +37,10 @@ def create_post():
     title = data.get('title')
     content = data.get('content')
 
-    user_id = current_user.id
-    user = current_user
-
     if not title or not content:
         return jsonify({'error': 'Missing required fields'}), 400
 
-    new_post = Post(title=title, content=content, user_id=user_id)
+    new_post = Post(title=title, content=content, user_id=current_user.id)
     db.session.add(new_post)
     db.session.commit()
 
@@ -27,44 +50,24 @@ def create_post():
             'id': new_post.id,
             'title': new_post.title,
             'content': new_post.content,
-            'author': user.username,
-            'created_at': new_post.created_at.isoformat()
+            'created_at': new_post.created_at.isoformat(),
+            'author': {
+                'id': current_user.id,
+                'username': current_user.username
+            }
         }
     }), 201
 
-@post_bp.route('/posts', methods=['GET'])
-def get_user_posts():
-    user_id = request.args.get('user_id')
+@post_bp.route('/posts/<int:post_id>', methods=['DELETE'])
+@login_required
+def delete_post(post_id):
+    post = Post.query.get(post_id)
+    if not post:
+        return jsonify({'error': 'Post not found'}), 404
 
-    if not user_id:
-        return jsonify({'error': 'User ID is required'}), 400
+    if post.user_id != current_user.id:
+        return jsonify({'error': 'Unauthorized'}), 403
 
-    user = User.query.get(user_id)
-    if not user:
-        return jsonify({'error': 'User not found'}), 404
-
-    posts = Post.query.filter_by(user_id=user.id).order_by(Post.created_at.desc()).all()
-
-    return jsonify([
-        {
-            'id': p.id,
-            'title': p.title,
-            'content': p.content,
-            'author': user.username,
-            'created_at': p.created_at.isoformat()
-        } for p in posts
-    ]), 200
-
-@post_bp.route('/users/<int:user_id>/posts', methods=['GET'])
-def get_specific_user_posts(user_id):
-    user = User.query.get_or_404(user_id)
-    posts = Post.query.filter_by(user_id=user.id).order_by(Post.created_at.desc()).all()
-
-    return jsonify([
-        {
-            'id': post.id,
-            'title': post.title,
-            'content': post.content,
-            'created_at': post.created_at.isoformat()
-        } for post in posts
-    ]), 200
+    db.session.delete(post)
+    db.session.commit()
+    return jsonify({'message': 'Post deleted'}), 200

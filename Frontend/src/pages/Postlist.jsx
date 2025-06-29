@@ -5,25 +5,31 @@ import "../components/Postlist.css";
 function Postlist() {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     fetch("http://127.0.0.1:5000/posts", {
+      method: "GET",
       credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
     })
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error("Failed to fetch posts");
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
         }
-        return res.json();
+        return response.json();
       })
       .then((data) => {
         setPosts(data);
-        setLoading(false);
+        setError(null);
       })
       .catch((err) => {
-        console.error("Error fetching posts:", err);
-        setError(true);
+        console.error("Fetch error:", err);
+        setError(err.message);
+      })
+      .finally(() => {
         setLoading(false);
       });
   }, []);
@@ -33,7 +39,7 @@ function Postlist() {
   }
 
   if (error) {
-    return <p className="error">Could not load posts. Please try again later.</p>;
+    return <p className="error">Error: {error}</p>;
   }
 
   return (
@@ -42,7 +48,7 @@ function Postlist() {
       {posts.length > 0 ? (
         posts.map((post) => <Postcard key={post.id} post={post} />)
       ) : (
-        <p className="no-posts">No posts yet.</p>
+        <p className="no-posts">No posts available.</p>
       )}
     </section>
   );

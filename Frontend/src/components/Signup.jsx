@@ -10,30 +10,34 @@ function Signup() {
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     const endpoint = isSignUp ? "register" : "login";
     const payload = isSignUp ? { username, email, password } : { email, password };
 
-    try {
-      const response = await fetch(`http://localhost:5000/${endpoint}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
+    fetch(`http://localhost:5000/${endpoint}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include", // ✅ important for session cookie
+      body: JSON.stringify(payload),
+    })
+      .then((response) => {
+        return response.json().then((data) => {
+          if (response.ok) {
+            setMessage("Success!");
+            if (!isSignUp) {
+              localStorage.setItem("username", data.username); // optional
+            }
+            navigate("/start");
+          } else {
+            setMessage(data.error || "Something went wrong.");
+          }
+        });
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+        setMessage("Server error. Try again later.");
       });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        localStorage.setItem("user", JSON.stringify(data));
-        setMessage("Success!");
-        navigate("/start"); // ✅ redirect to Postlist
-      } else {
-        setMessage(data.error || "Something went wrong.");
-      }
-    } catch (err) {
-      setMessage("Server error. Try again later.");
-    }
   };
 
   return (
@@ -49,6 +53,7 @@ function Signup() {
           required
         />
       )}
+
       <input
         type="email"
         placeholder="Email"
@@ -56,6 +61,7 @@ function Signup() {
         onChange={(e) => setEmail(e.target.value)}
         required
       />
+
       <input
         type="password"
         placeholder="Password"
@@ -65,7 +71,10 @@ function Signup() {
       />
 
       <button type="submit">{isSignUp ? "Create Account" : "Sign In"}</button>
-      <p style={{ cursor: "pointer", color: "blue" }} onClick={() => setIsSignUp(!isSignUp)}>
+      <p
+        style={{ cursor: "pointer", color: "blue" }}
+        onClick={() => setIsSignUp(!isSignUp)}
+      >
         {isSignUp ? "Already have an account? Sign in" : "Don't have an account? Create one"}
       </p>
 

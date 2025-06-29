@@ -5,35 +5,42 @@ function Write() {
    const [title, setTitle] = useState("");
    const [content, setContent] = useState("");
    const [message, setMessage] = useState("");
+   const handleSubmit = (e) => {
+  e.preventDefault();
+  const user = JSON.parse(localStorage.getItem("user"));
+  const user_id = user?.user_id;
 
-   const handleSubmit = async (e) => {
-      e.preventDefault();
 
-      // Replace with real user_id from localStorage/session
-      const user_id = localStorage.getItem("user_id");
-
-      const response = await fetch("http://localhost:5000/posts", {
-         method: "POST",
-         headers: {
-            "Content-Type": "application/json",
-         },
-         body: JSON.stringify({
-            title,
-            content,
-            user_id,
-         }),
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-         setMessage("Story posted successfully!");
-         setTitle("");
-         setContent("");
+  if (!user_id) {
+    setMessage("User not logged in.");
+    return;
+  }
+  fetch("http://localhost:5000/posts", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+    body: JSON.stringify({ title, content, user_id }),
+  })
+    .then((response) =>
+      response.json().then((data) => ({ status: response.status, data }))
+    )
+    .then(({ status, data }) => {
+      if (status === 200 || status === 201) {
+        setMessage("Story posted successfully!");
+        setTitle("");
+        setContent("");
       } else {
-         setMessage(data.error || "Failed to post story.");
+        setMessage(data.error || "Failed to post story.");
       }
-   };
+    })
+    .catch((error) => {
+      console.error("Error posting story:", error);
+      setMessage("An error occurred while posting.");
+    });
+};
+   
 
    return (
       <form className="write-form" onSubmit={handleSubmit}>

@@ -1,5 +1,5 @@
 Inkspire - Blogging Platform
-https://via.placeholder.com/150x50?text=Inkspire
+rv 
 A modern blogging platform for writers and readers
 
 Table of Contents
@@ -38,11 +38,10 @@ React.js
 
 Vite
 
-Tailwind CSS
 
 React Router
 
-Axios
+
 
 Backend
 Python Flask
@@ -58,7 +57,7 @@ Flask-CORS
 Database
 SQLite (Development)
 
-PostgreSQL (Production)
+
 
 Installation 💻
 Prerequisites
@@ -66,7 +65,7 @@ Node.js (v16+)
 
 Python (v3.9+)
 
-pip
+pipenv
 
 Setup Instructions
 Clone the repository
@@ -80,7 +79,7 @@ bash
 cd Backend
 python -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
-pip install -r requirements.txt
+pipenv install  
 Set up frontend
 
 bash
@@ -124,33 +123,8 @@ Run database migrations
 bash
 flask db migrate -m "Migration message"
 flask db upgrade
-Deployment 🚀
-Heroku Deployment
-Create a new Heroku app
 
-Set up PostgreSQL add-on
 
-Configure environment variables
-
-Deploy using Git:
-
-bash
-git push heroku main
-Docker Deployment
-bash
-docker-compose up --build
-Contributing 🤝
-We welcome contributions! Please follow these steps:
-
-Fork the repository
-
-Create your feature branch (git checkout -b feature/AmazingFeature)
-
-Commit your changes (git commit -m 'Add some AmazingFeature')
-
-Push to the branch (git push origin feature/AmazingFeature)
-
-Open a Pull Request
 
 License 📄
 This project is licensed under the MIT License - see the LICENSE file for deta

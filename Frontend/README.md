@@ -71,7 +71,7 @@ Setup Instructions
 Clone the repository
 
 bash
-git clone https://github.com/yourusername/inkspire.git
+git clone https://github.com/daisy-rg/Inkspire.git
 cd inkspire
 Set up backend
 

@@ -35,7 +35,7 @@ def login():
     user = User.query.filter_by(email=email).first()
 
     if user and check_password_hash(user.password_hash, password):
-        login_user(user)  # 👈 this handles the session
+        login_user(user)  
         return jsonify({'message': 'Login successful', 'user_id': user.id, 'username': user.username}), 200
 
     return jsonify({'error': 'Invalid email or password'}), 401
@@ -46,3 +46,8 @@ def login():
 def logout():
     logout_user()
     return jsonify({'message': 'Logged out successfully'}), 200
+@auth_bp.route('/whoami')
+def whoami():
+    if current_user.is_authenticated:
+        return jsonify({'id': current_user.id, 'username': current_user.username})
+    return jsonify({'error': 'Not logged in'}), 401

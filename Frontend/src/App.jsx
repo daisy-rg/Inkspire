@@ -10,14 +10,13 @@ function App() {
   return(
     <Router>
       <Navbar/>
-     <Routes>
- <Route path="/" element={<Home />} />
+    <Routes>
+      <Route path="/" element={<Home />} />
       <Route path='/signin' element={<Signup/>} />
       <Route path='/write' element={<Write/>} />
       <Route path='/get-started' element={<Signup/>} />
-    
-    <Route path='/start' element={<Postlist/>} />
-    <Route path="/posts/:postId" element={<FullPost />} />
+      <Route path='/start' element={<Postlist/>} />
+      <Route path="/posts/:postId" element={<FullPost />} />
          
 </Routes>
       <Footer/>

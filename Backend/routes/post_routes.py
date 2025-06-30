@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, request
-from flask_login import login_required, current_user
-from models.models import db, Post
+from models.models import db, Post, User
 from datetime import datetime
+from flask_login import login_required,current_user
 
 post_bp = Blueprint('posts_bp', __name__)
 
@@ -25,49 +25,38 @@ def get_posts():
             posts_data.append(post_data)
 
         return jsonify(posts_data), 200
-
     except Exception as e:
         print(f"Error fetching posts: {str(e)}")
         return jsonify({'error': 'Internal server error'}), 500
 
+
 @post_bp.route('/posts', methods=['POST'])
-@login_required
+
 def create_post():
     data = request.get_json()
     title = data.get('title')
     content = data.get('content')
+    user_id = data.get('user_id')
 
-    if not title or not content:
-        return jsonify({'error': 'Missing required fields'}), 400
+    if not title or not content or not user_id:
+        return jsonify({'error': 'Title, content and users id are required'}), 400
 
-    new_post = Post(title=title, content=content, user_id=current_user.id)
+    new_post = Post(
+        title=title,
+        content=content,
+        created_at=datetime.utcnow(),
+        user_id=user_id
+    )
+
     db.session.add(new_post)
     db.session.commit()
 
-    return jsonify({
-        'message': 'Post created successfully',
-        'post': {
-            'id': new_post.id,
-            'title': new_post.title,
-            'content': new_post.content,
-            'created_at': new_post.created_at.isoformat(),
-            'author': {
-                'id': current_user.id,
-                'username': current_user.username
-            }
-        }
-    }), 201
+    return jsonify({'message': 'Post created successfully'}), 201
 
 @post_bp.route('/posts/<int:post_id>', methods=['DELETE'])
-@login_required
 def delete_post(post_id):
     post = Post.query.get(post_id)
     if not post:
         return jsonify({'error': 'Post not found'}), 404
 
-    if post.user_id != current_user.id:
-        return jsonify({'error': 'Unauthorized'}), 403
-
-    db.session.delete(post)
-    db.session.commit()
-    return jsonify({'message': 'Post deleted'}), 200
+    return jsonify({'error': 'Unauthorized'}), 403

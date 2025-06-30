@@ -34,7 +34,7 @@ section p {
 #but {
    padding: 0.8rem 2rem;
   font-size: 1.1rem;
-  background-color: #000; /* Black button */
+  background-color: #000; 
   color: #fff;
   border: none;
   border-radius: 30px;

@@ -46,8 +46,3 @@ def login():
 def logout():
     logout_user()
     return jsonify({'message': 'Logged out successfully'}), 200
-@auth_bp.route('/whoami')
-def whoami():
-    if current_user.is_authenticated:
-        return jsonify({'id': current_user.id, 'username': current_user.username})
-    return jsonify({'error': 'Not logged in'}), 401

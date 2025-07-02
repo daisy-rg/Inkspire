@@ -9,7 +9,7 @@ function Write() {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    const token = localStorage.getItem('token'); // <-- must be set during login
+    const token = localStorage.getItem('token'); 
 
     if (!token) {
       alert("You must be logged in to post.");
@@ -20,7 +20,7 @@ function Write() {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`,  // <-- fix here
+        "Authorization": `Bearer ${token}`, 
       },
       body: JSON.stringify({ title, content }),
       credentials: 'include',

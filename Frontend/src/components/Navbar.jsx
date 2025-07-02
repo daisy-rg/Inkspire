@@ -1,8 +1,11 @@
-import React from "react";
-import { Link } from "react-router-dom";
-import './Navbar.css';
+import React, { useContext } from 'react'
+import { Link } from 'react-router-dom'
+import { AuthContext } from '../App'
+import './Navbar.css'
 
 function Navbar() {
+  const { token, user, handleLogout } = useContext(AuthContext)
+
   return (
     <header className="header">
       <div className="header-container">
@@ -12,15 +15,24 @@ function Navbar() {
 
         <nav className="header-nav">
           <Link to="/story" className="header-link">Our Story</Link>
-          <Link to="/write" className="header-link">Write</Link>
-          <Link to="/signin" className="header-link">Sign In</Link>
-          <Link to="/get-started">
-            <button className="header-button">Get Started</button>
-          </Link>
+          {token && <Link to="/write" className="header-link">Write</Link>}
+          {token ? (
+            <>
+              <span className="header-username">{user?.username}</span>
+              <button onClick={handleLogout} className="header-button">Logout</button>
+            </>
+          ) : (
+            <>
+              <Link to="/signin" className="header-link">Sign In</Link>
+              <Link to="/get-started">
+                <button className="header-button">Get Started</button>
+              </Link>
+            </>
+          )}
         </nav>
       </div>
     </header>
-  );
+  )
 }
 
-export default Navbar;
+export default Navbar

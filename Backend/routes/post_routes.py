@@ -1,62 +1,84 @@
 from flask import Blueprint, jsonify, request
+from flask_jwt_extended import jwt_required, get_jwt_identity
 from models.models import db, Post, User
 from datetime import datetime
-from flask_login import login_required,current_user
 
 post_bp = Blueprint('posts_bp', __name__)
 
 @post_bp.route('/posts', methods=['GET'])
 def get_posts():
-    try:
-        posts = Post.query.options(db.joinedload(Post.author)).all()
-        posts_data = []
-
-        for post in posts:
-            post_data = {
-                'id': post.id,
-                'title': post.title,
-                'content': post.content,
-                'created_at': post.created_at.isoformat(),
-                'author': {
-                    'id': post.author.id,
-                    'username': post.author.username
-                } if post.author else None
-            }
-            posts_data.append(post_data)
-
-        return jsonify(posts_data), 200
-    except Exception as e:
-        print(f"Error fetching posts: {str(e)}")
-        return jsonify({'error': 'Internal server error'}), 500
-
+    posts = Post.query.options(db.joinedload(Post.author)).all()
+    return jsonify([{
+        'id': post.id,
+        'title': post.title,
+        'content': post.content,
+        'created_at': post.created_at.isoformat(),
+        'author': {
+            'id': post.author.id,
+            'username': post.author.username
+        }
+    } for post in posts]), 200
 
 @post_bp.route('/posts', methods=['POST'])
-
+@jwt_required()
 def create_post():
     data = request.get_json()
-    title = data.get('title')
-    content = data.get('content')
-    user_id = data.get('user_id')
+    if not data.get('title') or not data.get('content'):
+        return jsonify({'error': 'Title and content required'}), 400
+    user_id = get_jwt_identity()
+    print("JWT Identity (user_id):", user_id)
 
-    if not title or not content or not user_id:
-        return jsonify({'error': 'Title, content and users id are required'}), 400
+    if not user_id:
+        return jsonify({'error': 'Invalid or missing user identity'}), 401
 
     new_post = Post(
-        title=title,
-        content=content,
-        created_at=datetime.utcnow(),
-        user_id=user_id
+        title=data['title'],
+        content=data['content'],
+        user_id=get_jwt_identity(),
+        created_at=datetime.utcnow()
     )
-
     db.session.add(new_post)
     db.session.commit()
+    return jsonify({'message': 'Post created'}), 201
 
-    return jsonify({'message': 'Post created successfully'}), 201
+@post_bp.route('/posts/<int:post_id>', methods=['GET'])
+def get_post(post_id):
+    post = Post.query.options(db.joinedload(Post.author)).get(post_id)
+    if not post:
+        return jsonify({'error': 'Post not found'}), 404
+    return jsonify({
+        'id': post.id,
+        'title': post.title,
+        'content': post.content,
+        'author': {
+            'id': post.author.id,
+            'username': post.author.username
+        }
+    }), 200
+
+@post_bp.route('/posts/<int:post_id>', methods=['PATCH'])
+@jwt_required()
+def update_post(post_id):
+    post = Post.query.get(post_id)
+    if not post:
+        return jsonify({'error': 'Post not found'}), 404
+    if post.user_id != get_jwt_identity():
+        return jsonify({'error': 'Unauthorized'}), 403
+
+    data = request.get_json()
+    post.title = data.get('title', post.title)
+    post.content = data.get('content', post.content)
+    db.session.commit()
+    return jsonify({'message': 'Post updated'}), 200
 
 @post_bp.route('/posts/<int:post_id>', methods=['DELETE'])
+@jwt_required()
 def delete_post(post_id):
     post = Post.query.get(post_id)
     if not post:
         return jsonify({'error': 'Post not found'}), 404
-
-    return jsonify({'error': 'Unauthorized'}), 403
+    if post.user_id != get_jwt_identity():
+        return jsonify({'error': 'Unauthorized'}), 403
+    db.session.delete(post)
+    db.session.commit()
+    return jsonify({'message': 'Post deleted'}), 200

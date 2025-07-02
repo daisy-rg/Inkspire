@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
-from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 from models.models import db, User
 
 auth_bp = Blueprint('auth_bp', __name__)
@@ -25,7 +25,6 @@ def register():
 
     return jsonify({'message': 'User registered successfully'}), 201
 
-
 @auth_bp.route('/login', methods=['POST'])
 def login():
     data = request.get_json()
@@ -35,14 +34,23 @@ def login():
     user = User.query.filter_by(email=email).first()
 
     if user and check_password_hash(user.password_hash, password):
-        login_user(user)  
-        return jsonify({'message': 'Login successful', 'user_id': user.id, 'username': user.username}), 200
+        access_token = create_access_token(identity=user.id)
+        return jsonify({
+            'access_token': access_token,
+            'user_id': user.id,
+            'username': user.username
+        }), 200
 
     return jsonify({'error': 'Invalid email or password'}), 401
 
+@auth_bp.route('/protected', methods=['GET'])
+@jwt_required()
+def protected():
+    current_user_id = get_jwt_identity()
+    user = User.query.get(current_user_id)
+    return jsonify({'message': f'Logged in as {user.username}'}), 200
 
 @auth_bp.route('/logout', methods=['POST'])
-
+@jwt_required()
 def logout():
-    logout_user()
-    return jsonify({'message': 'Logged out successfully'}), 200
+    return jsonify({'message': 'Successfully logged out'}), 200

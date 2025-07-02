@@ -1,19 +1,18 @@
-import React, { useState } from "react";
-import './Write.css';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 function Write() {
-  const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
-  const [message, setMessage] = useState("");
+  const [title, setTitle] = useState('');
+  const [content, setContent] = useState('');
+  const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    const user = JSON.parse(localStorage.getItem("user"));
-    const user_id = user?.user_id;
+    const token = localStorage.getItem('token'); // <-- must be set during login
 
-    if (!user_id) {
-      setMessage("User not logged in.");
+    if (!token) {
+      alert("You must be logged in to post.");
       return;
     }
 
@@ -21,49 +20,44 @@ function Write() {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`,  // <-- fix here
       },
-      credentials: "include",
-      body: JSON.stringify({ title, content, user_id }),
+      body: JSON.stringify({ title, content }),
+      credentials: 'include',
     })
-      .then((response) =>
-        response.json().then((data) => ({ status: response.status, data }))
-      )
-      .then(({ status, data }) => {
-        if (status === 201) {
-          setMessage("Story posted successfully!");
-          setTitle("");
-          setContent("");
+      .then(res => {
+        if (res.ok) {
+          alert("Story posted!");
+          navigate('/start');
         } else {
-          setMessage(data.error || "Failed to post story.");
+          res.json().then(data => {
+            alert(data.error || "Failed to post story");
+          });
         }
       })
-      .catch((error) => {
-        console.error("Error posting story:", error);
-        setMessage("An error occurred while posting.");
+      .catch(err => {
+        console.error("Error posting story:", err);
+        alert("Something went wrong");
       });
   };
 
   return (
-    <form className="write-form" onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} className="write-container">
+      <h2>Write a Story</h2>
       <input
         type="text"
-        className="story-title"
         placeholder="Title"
         value={title}
         onChange={(e) => setTitle(e.target.value)}
         required
       />
-
       <textarea
-        className="story-content"
-        placeholder="Tell your story..."
+        placeholder="Your story..."
         value={content}
         onChange={(e) => setContent(e.target.value)}
         required
       ></textarea>
-
-      <button type="submit" className="story-submit">Post Story</button>
-      {message && <p>{message}</p>}
+      <button type="submit">Post</button>
     </form>
   );
 }

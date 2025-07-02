@@ -1,86 +1,94 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useContext, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Formik, Form, Field, ErrorMessage } from 'formik';
+import * as Yup from 'yup';
+import { AuthContext } from '../App';
 import './Signup.css';
 
 function Signup() {
-  const [isSignUp, setIsSignUp] = useState(true);
-  const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [message, setMessage] = useState("");
   const navigate = useNavigate();
+  const { handleLogin } = useContext(AuthContext);
+  const [isSignUp, setIsSignUp] = useState(true);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const endpoint = isSignUp ? "register" : "login";
-    const payload = isSignUp ? { username, email, password } : { email, password };
-
-    fetch(`http://localhost:5000/${endpoint}`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include", 
-      body: JSON.stringify(payload),
+  const validationSchema = Yup.object({
+    email: Yup.string().email('Invalid email').required('Required'),
+    password: Yup.string().min(6, 'Too short').required('Required'),
+    ...(isSignUp && {
+      username: Yup.string().min(3, 'Too short').required('Required')
     })
-      .then((response) => {
-        return response.json().then((data) => {
-          if (response.ok) {
-            setMessage("Success!");
-            if (!isSignUp) {
-              localStorage.setItem("username", data.username); 
-              localStorage.setItem("user_id", data.user_id);
-            }
-            navigate("/start");
-          } else {
-            setMessage(data.error || "Something went wrong.");
-          }
-        });
-      })
-      .catch((error) => {
-        console.error("Error:", error);
-        setMessage("Server error. Try again later.");
+  });
+
+  const handleSubmit = async (values, { setSubmitting, setStatus }) => {
+    try {
+      const endpoint = isSignUp ? 'register' : 'login';
+      const res = await fetch(`http://localhost:5000/${endpoint}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(values)
       });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Authentication failed');
+
+      if (!isSignUp) {
+        // ✅ Save token and user info for Write.jsx
+        localStorage.setItem("token", data.access_token);
+        localStorage.setItem("user_id", data.user_id);
+        localStorage.setItem("username", data.username);
+
+        handleLogin(data.access_token, {
+          id: data.user_id,
+          username: data.username
+        });
+      }
+
+      navigate('/start');
+    } catch (error) {
+      setStatus(error.message);
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
-    <form id="loginForm" onSubmit={handleSubmit}>
-      <h2>{isSignUp ? "Create Account" : "Sign In"}</h2>
+    <Formik
+      initialValues={{ username: '', email: '', password: '' }}
+      validationSchema={validationSchema}
+      onSubmit={handleSubmit}
+    >
+      {({ isSubmitting, status }) => (
+        <Form className="auth-form">
+          <h2>{isSignUp ? 'Create Account' : 'Sign In'}</h2>
 
-      {isSignUp && (
-        <input
-          type="text"
-          placeholder="Username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          required
-        />
+          {isSignUp && (
+            <div className="form-group">
+              <Field name="username" placeholder="Username" />
+              <ErrorMessage name="username" component="div" className="error" />
+            </div>
+          )}
+
+          <div className="form-group">
+            <Field name="email" type="email" placeholder="Email" />
+            <ErrorMessage name="email" component="div" className="error" />
+          </div>
+
+          <div className="form-group">
+            <Field name="password" type="password" placeholder="Password" />
+            <ErrorMessage name="password" component="div" className="error" />
+          </div>
+
+          <button type="submit" disabled={isSubmitting}>
+            {isSignUp ? 'Create Account' : 'Sign In'}
+          </button>
+
+          <p className="toggle-auth" onClick={() => setIsSignUp(!isSignUp)}>
+            {isSignUp ? 'Already have an account? Sign in' : 'Need an account? Register'}
+          </p>
+
+          {status && <div className="form-status">{status}</div>}
+        </Form>
       )}
-
-      <input
-        type="email"
-        placeholder="Email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        required
-      />
-
-      <input
-        type="password"
-        placeholder="Password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        required
-      />
-
-      <button type="submit">{isSignUp ? "Create Account" : "Sign In"}</button>
-      <p
-        style={{ cursor: "pointer", color: "blue" }}
-        onClick={() => setIsSignUp(!isSignUp)}
-      >
-        {isSignUp ? "Already have an account? Sign in" : "Don't have an account? Create one"}
-      </p>
-
-      {message && <p>{message}</p>}
-    </form>
+    </Formik>
   );
 }
 

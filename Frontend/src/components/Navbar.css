@@ -88,3 +88,8 @@
   transform: translateY(-3px);
 
 }
+.header-username {
+  color: var(--text-color);
+  margin-right: 1rem;
+  font-weight: 500;
+}

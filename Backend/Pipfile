@@ -9,6 +9,8 @@ cors = "*"
 flask-login = "*"
 flask-cors = "*"
 flask = "*"
+sqlalchemy-serializer = "*"
+flask-jwt-extended = "*"
 
 [dev-packages]
 

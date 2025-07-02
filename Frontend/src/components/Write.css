@@ -1,80 +1,52 @@
-.write-form{
-  margin-bottom: 5vh;
-}
-.story-title {
-  font-size: 2.5rem;
-  border: none;
-  border-bottom: 1px solid #f0f0f0; 
-  margin-bottom: 1.5rem;
-  outline: none;
-  color: #1f1e1e; 
-  font-family: 'Helvetica Neue', sans-serif;
-  font-weight: 300;
-  letter-spacing: -0.5px;
-  padding-bottom: 0.5rem;
-  background: transparent;
-  width: 100%;
-}
-
-.story-title::placeholder {
-  color: #d0d0d0; 
-  font-weight: 300;
-  font-style: italic;
-}
-
-.story-content {
-  height: 300px;
-  font-size: 1.2rem;
-  border: none;
-  resize: vertical;
-  outline: none;
-  color: #090909; 
-  font-family: 'Helvetica Neue', sans-serif;
-  font-weight: 300;
-  line-height: 1.8;
-  background: transparent;
-  width: 100%;
-  padding: 0.5rem 0;
-}
-
-.story-content::placeholder {
-  color: #d0d0d0;
-  font-style: italic;
-}
-
-.story-submit {
-  align-self: flex-end;
-  margin-top: 10.5rem;
-  padding: 0.75rem 2rem;
-  background-color: transparent;
-  color: #0b0b0b;
-  border: 1px solid #e0e0e0;
-  border-radius: 0; 
-  font-size: 1rem;
-  font-weight: 300;
-  letter-spacing: 1px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  text-transform: uppercase;
-  
-}
-
-.story-submit:hover {
-  color: #808080;
-  border-color: #c0c0c0;
-  background-color: rgba(0,0,0,0.02); 
-}
-
-
-.story-title:focus,
-.story-content:focus {
-  border-bottom-color: #d0d0d0;
-}
-
-
-.story-container {
-  background: white;
-  padding: 3rem;
+.write-container {
+  width: 90%;
   max-width: 800px;
-  margin: 2rem auto;
+  margin: 50px auto;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.write-container h2 {
+  font-size: 32px;
+  margin-bottom: 20px;
+  color: #222;
+  text-align: left;
+}
+
+.write-container input[type="text"],
+.write-container textarea {
+  color: #0a0b0b;
+  width: 100%;
+  padding: 14px 16px;
+  margin-bottom: 25px;
+  border: none;
+  border-bottom: 2px solid #ccc;
+  background-color: transparent;
+  font-size: 16px;
+  transition: border-color 0.3s ease;
+}
+
+.write-container input[type="text"]:focus,
+.write-container textarea:focus {
+  border-bottom: 2px solid #4a90e2;
+  outline: none;
+}
+
+.write-container textarea {
+  min-height: 160px;
+  resize: vertical;
+}
+
+.write-container button {
+  padding: 12px 28px;
+  background-color: #4a90e2;
+  color: white;
+  font-size: 16px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.write-container button:hover {
+  background-color: #357ab8;
 }

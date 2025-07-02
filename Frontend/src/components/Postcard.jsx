@@ -1,25 +1,39 @@
-import React from "react";
+import React, { useContext } from "react";
 import './Postcard.css';
 import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../App";
 
 function Postcard({ post }) {
   const navigate = useNavigate();
+  const { user } = useContext(AuthContext);
 
   const handleRead = () => {
     navigate(`/posts/${post.id}`);
   };
 
   const handleDelete = () => {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      alert("You must be logged in to delete this post.");
+      return;
+    }
+
     fetch(`http://127.0.0.1:5000/posts/${post.id}`, {
       method: "DELETE",
-      credentials: "include",
+      headers: {
+        "Authorization": `Bearer ${token}`,
+        "Content-Type": "application/json"
+      }
     })
       .then(res => {
         if (res.ok) {
           alert("Post deleted!");
           window.location.reload();
         } else {
-          alert("Failed to delete post.");
+          res.json().then(data => {
+            alert(data.error || "Failed to delete post.");
+          });
         }
       })
       .catch(err => {
@@ -42,8 +56,14 @@ function Postcard({ post }) {
 
       <div className="post-actions">
         <button className="read-btn" onClick={handleRead}>Read</button>
-        {localStorage.getItem("user_id") === post.author?.id?.toString() && (
-          <button onClick={handleDelete}>Delete</button>
+        {user?.id === post.author?.id && (
+          <button className="delete-btn" onClick={() => {
+            if (window.confirm("Are you sure you want to delete this post?")) {
+              handleDelete();
+            }
+          }}>
+            Delete
+          </button>
         )}
       </div>
     </div>
